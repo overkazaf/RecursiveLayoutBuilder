@@ -117,7 +117,7 @@
 							var target = $(opts.targetClass).eq(tt);
 
 							if (target.closest('.layout-container') == $(that)) {
-								alert('self');
+								//alert('self');
 								return;
 							}
 							var layout = $(that).clone();
@@ -127,7 +127,8 @@
 							if (le.hasClass('widget')) {
 								target.append(le.draggable(opts));
 							} else {
-								target.append(le);
+								// cannot move again
+								target.append(le.draggable(opts));
 							}
 							// fix dataLayout
 							

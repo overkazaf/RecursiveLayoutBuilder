@@ -11,24 +11,25 @@
 		.layout-container {
 			position: relative;
 			height:100px;
-		}
-		.layout-zone {
 			border:1px dotted #000;
 			box-sizing:border-box;
 			-moz-box-sizing:border-box; /* Firefox */
 			-webkit-box-sizing:border-box; /* Safari */
+		}
+		.layout-zone {
+			
 			float:left;
 			min-height:100px;
 			height:auto;
 			background:#99CCFF;
 		}
 
-		.lz1 {width : 100%;}
-		.lz2 {width : 25%;}
-		.lz3 {width : 75%;}
-		.lz4 {width : 50%;}
+		.lz1 {width : 100%;background-color:#F00;}
+		.lz2 {width : 25%;background-color: #F0F;}
+		.lz3 {width : 75%;background-color: #0FF;}
+		.lz4 {width : 50%;background-color: #00F;}
 
-		#drag{width:50px;height:50px;background-color:#FF0;cursor:move;border:1px dotted #000;
+		#drag{width:250px;height:250px;background-color:#FF0;cursor:move;border:1px dotted #000;
 			box-sizing:border-box;
 			-moz-box-sizing:border-box; /* Firefox */
 			-webkit-box-sizing:border-box; /* Safari */}
@@ -63,7 +64,13 @@
 	</div>
 
 	<div id="drag" class="widget"></div>
-	<div id="testLayout" class="layout-container" data-layer="0">
+	<div class="test layout-container" data-layer="0">
+		<div class="layout-zone lz2"></div>
+		<div class="layout-zone lz2"></div>
+		<div class="layout-zone lz4"></div>
+	</div>
+
+	<div class="test layout-container" data-layer="0">
 		<div class="layout-zone lz4"></div>
 		<div class="layout-zone lz4"></div>
 	</div>
@@ -77,7 +84,7 @@
 			targetClass : ".layout-zone"
 		});
 
-		$('#testLayout').draggable({
+		$('.test').draggable({
 			targetContainer : ".layout-container",
 			targetClass : ".layout-zone"
 		});

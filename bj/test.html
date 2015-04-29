@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		.clearfix {
+		  *zoom: 1;
+		}
+
+		.clearfix:before,
+		.clearfix:after {
+		  display: table;
+		  line-height: 0;
+		  content: "";
+		}
+		
+		.wrapper {
+			width:1200px;
+		}
+		.container{
+			display: table; 
+			width:100%;
+		} 
+		.row { 
+			display: table-row;
+			text-align: center;
+			width:100%;
+			position: relative;
+		} 
+		.cell { 
+			display: table-cell; 
+			border: 1px solid blue;
+			height: 100px; 
+			padding: 1px; 
+		}
+		.c1{width:25%;}
+		.c2{width:50%;}
+		.c3{width:75%;}
+		.c4{width:100%;}
+
+		.block {
+			width:400px;height:400px;background-color: #aaa;
+		}
+		.block-sm {
+			width:200px;height:200px;background-color: #aaa;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<div class="container"> 
+			<div class="row"> 
+				<div class="cell c1"> 
+					<div class="block"></div>
+
+				</div> 
+				<div class="cell c1"> 
+					<div class="block-sm"></div>
+				 </div> 
+				<div class="cell c2">
+					<div class="container">
+						<div class="row"> 
+							<div class="cell c1"> C</div> 
+							<div class="cell c3"> 
+								<div class="container">
+									<div class="row"> 
+										<div class="cell c1"> C</div> 
+										<div class="cell c3"> 
+											<div class="container">
+												<div class="row"> 
+													<div class="cell c1"> C</div> 
+													<div class="cell c3"> 
+														
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div> 
+			</div> 
+		</div> 
+	</div>
+</body>
+</html>
