@@ -26,13 +26,29 @@
 					$(that).on('mousedown', Drag.start);
 				}, 
 				start : function (ev){
-					
+					if ($(that).find('.layout-container').length) {
+						alert('Please remove the top level object first');
+						var layer = 0,
+							index = -1;
+						$(that).find('.layout-container').each(function (index){
+							if ($(this).data('layer') > layer) {
+								layer = $(this).data(layer);
+								target  = index;
+							}
+						});
+
+						$(that).find('.layout-container').eq(target).addClass('hightlight');
+						return;
+					} else {
+						$(that).removeClass('hightlight');
+					}
 					Drag.draggedItem = $('<div>').css({
 						position:'absolute',
 						width : $(that).width() + 'px',
 						height : $(that).height() + 'px',
 						left : $(that).offset().left, top : $(that).offset().top,
 						'background-color' : '#2b2b2b',
+						cursor : 'move',
 						opacity : 0.6
 					}).appendTo(context);
 					var obj = Drag.draggedItem;
@@ -123,12 +139,10 @@
 							var layout = $(that).clone();
 							
 
-							if (layout.hasClass('widget')) {
-								target.append(layout.draggable(opts));
-							} else {
-								// cannot move again
-								target.append(layout.draggable(opts));
-							}
+							target.append(layout.draggable(opts));
+							layout.find('*[operable]').each(function (){
+								$(this).smartMenu(menuData);
+							});
 							fixLayer(layout);
 							// fix dataLayout
 							

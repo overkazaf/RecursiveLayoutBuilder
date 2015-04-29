@@ -26,7 +26,7 @@
 			text-align: left;
 		}
 
-		.lz1 {width : 100%;background-color:#F00;}
+		.lz1 {width : 100%;background-color:pink;}
 		.lz2 {width : 25%;background-color: #F0F;}
 		.lz3 {width : 75%;background-color: #0FF;}
 		.lz4 {width : 50%;background-color: #00F;}
@@ -36,42 +36,50 @@
 			box-sizing:border-box;
 			-moz-box-sizing:border-box; /* Firefox */
 			-webkit-box-sizing:border-box; /* Safari */}
+		.hightlight{border:4px dotted #FF0;background:#FF0;}
+
 	</style>
 </head>
 <body>
 
 	<div class="layout-container"  data-layer="0" operable="layout">
 		<div class="layout-row">
+			<div class="layout-cell lz1"></div>
+		</div>
+	</div>
+	<div class="layout-container"  data-layer="0" operable="layout">
+		<div class="layout-row">
+			<div class="layout-cell lz1"></div>
+		</div>
+	</div>
+	<div class="layout-container"  data-layer="0" operable="layout">
+		<div class="layout-row">
+			<div class="layout-cell lz1"></div>
+		</div>
+	</div>
+
+	<div class="test layout-container" operable="layout" data-layer="0">
+		<div class="layout-row">
+			<div class="layout-cell lz2">
+			</div>
+			<div class="layout-cell lz3"></div>
+		</div>
+	</div>
+
+	<div class="test layout-container" data-layer="0" operable="layout">
+		<div class="layout-row">
+			<div class="layout-cell lz4"></div>
+			<div class="layout-cell lz4"></div>
+		</div>
+	</div>
+
+	<div class="test layout-container" data-layer="0" operable="layout">
+		<div class="layout-row">
 			<div class="layout-cell lz3"></div>
 			<div class="layout-cell lz2"></div>
 		</div>
 	</div>
 
-	<div class="layout-container" operable="layout" data-layer="0">
-		<div class="layout-row">
-			<div class="layout-cell lz3">
-			</div>
-			<div class="layout-cell lz2"></div>
-		</div>
-	</div>
-
-	<div id="drag" class="widget"></div>
-	<div class="test layout-container" data-layer="0" operable="layout">
-		<div class="layout-row">
-			<div class="layout-cell lz2"></div>
-			<div class="layout-cell lz2"></div>
-			<div class="layout-cell lz4"></div>
-		</div>
-	</div>
-
-	<div class="test layout-container" data-layer="0" operable="layout">
-		<div class="layout-row">
-			<div class="layout-cell lz2"></div>
-			<div class="layout-cell lz2"></div>
-			<div class="layout-cell lz4"></div>
-		</div>
-	</div>
-
 	<div class="test layout-container" data-layer="0" operable="layout">
 		<div class="layout-row">
 			<div class="layout-cell lz5"></div>
@@ -79,6 +87,18 @@
 			<div class="layout-cell lz5"></div>
 		</div>
 	</div>
+
+
+	<div class="test layout-container" data-layer="0" operable="layout">
+		<div class="layout-row">
+			<div class="layout-cell lz2"></div>
+			<div class="layout-cell lz2"></div>
+			<div class="layout-cell lz2"></div>
+			<div class="layout-cell lz2"></div>
+		</div>
+	</div>
+
+	<div id="drag" class="widget" operable="widget"></div>
 </body>
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="jquery-smartMenu.js"></script>
@@ -98,7 +118,7 @@ var menuData = [
 	   		var nx = ev.pageX;
 	   		var ny = ev.pageY;
 	   		// get Topper operable
-	   		alert($(self).prop('outerHTML'));
+	   		alert($(self).attr('operable'));
 	   		var operables = $(self).find('*[operable]');
 	   		if (operables.length) {
 	   			var offsets = (function (a){
