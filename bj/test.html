@@ -16,7 +16,8 @@
 		}
 		
 		.wrapper {
-			width:1200px;
+			width:1160px;
+			margin:0 auto;
 		}
 		.container{
 			display: table; 
@@ -30,9 +31,13 @@
 		} 
 		.cell { 
 			display: table-cell; 
-			border: 1px solid blue;
+			border: 1px dashed blue;
 			height: 100px; 
-			padding: 1px; 
+			box-sizing:border-box;
+			-moz-box-sizing:border-box; /* Firefox */
+			-webkit-box-sizing:border-box; /* Safari */
+			vertical-align: top;
+			text-align: left;
 		}
 		.c1{width:25%;}
 		.c2{width:50%;}
@@ -43,7 +48,7 @@
 			width:400px;height:400px;background-color: #aaa;
 		}
 		.block-sm {
-			width:200px;height:200px;background-color: #aaa;
+			width:100px;height:100px;background-color: #aaa;
 		}
 	</style>
 </head>
@@ -63,15 +68,20 @@
 						<div class="row"> 
 							<div class="cell c1"> C</div> 
 							<div class="cell c3"> 
+								<div class="block-sm"></div>
 								<div class="container">
 									<div class="row"> 
-										<div class="cell c1"> C</div> 
+										<div class="cell c1"> 
+											
+										</div> 
 										<div class="cell c3"> 
 											<div class="container">
 												<div class="row"> 
-													<div class="cell c1"> C</div> 
+													<div class="cell c1"> 
+														<div class="block-sm"></div>
+													</div> 
 													<div class="cell c3"> 
-														
+														<div class="block-sm"></div>
 													</div>
 												</div>
 											</div>

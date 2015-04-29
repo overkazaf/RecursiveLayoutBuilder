@@ -6,11 +6,7 @@
  */
 
 (function ($){
-	function log(k, v){
-		if (window.console && console.log) {
-			v ? console.log(k, v) : console.log(k);
-		}
-	}
+	
 
 	$.fn.draggable = function (options){
 		var opts = $.extend({}, $.fn.draggable.defaults, options);
@@ -21,6 +17,9 @@
 
 		this.each(function (i, cont){
 			var that = this;
+			if ($(that).find('.widget').length){
+				that = $(that).find('.widget').get(0);
+			}
 			var Drag = {
 				draggedItem : null,
 				init : function (){
@@ -93,7 +92,7 @@
 							p = i;
 						}
 					}
-					if (p != -1 && p != pos.length) {
+					if (p != -1) {
 						if (preLayoutZoneArray.length) {
 							var layer = -1;
 							var tt = preLayoutZoneArray[0];
@@ -107,10 +106,11 @@
 								}
 							}
 							
-							var fixLayer = function (layoutElem, parentLayer){
+							var fixLayer = function (layoutElem){
 								layoutElem.each(function (){
-									var originLayer = $(this).attr('data-layer');
-									$(this).attr('data-layer', +originLayer + +parentLayer + 1);
+									var originLayer  = 0; 
+										originLayer = $(this).parent() && $(this).parent().closest('.layout-container').attr('data-layer');
+									$(this).attr('data-layer', +originLayer + 1);
 								});
 								return layoutElem;
 							};
@@ -121,15 +121,15 @@
 								return;
 							}
 							var layout = $(that).clone();
-							var pLayer = $(target).closest('.layout-container').data('layer');
 							
-							var le = fixLayer(layout, pLayer);
-							if (le.hasClass('widget')) {
-								target.append(le.draggable(opts));
+
+							if (layout.hasClass('widget')) {
+								target.append(layout.draggable(opts));
 							} else {
 								// cannot move again
-								target.append(le.draggable(opts));
+								target.append(layout.draggable(opts));
 							}
+							fixLayer(layout);
 							// fix dataLayout
 							
 							$(that).remove();

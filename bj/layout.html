@@ -3,31 +3,34 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="smartMenu.css">
 	<style type="text/css">
-	
-		.layout-template{
-			margin-bottom: 10px;
-		}
-		.layout-container {
+		.layout-container{
+			display: table; 
+			width:100%;
+		} 
+		.layout-row{
+			display: table-row;
+			text-align: center;
+			width:100%;
 			position: relative;
-			height:100px;
-			border:1px dotted #000;
+		}
+		.layout-cell {
+			display: table-cell; 
+			border: 1px dashed blue;
+			height: 100px; 
 			box-sizing:border-box;
 			-moz-box-sizing:border-box; /* Firefox */
 			-webkit-box-sizing:border-box; /* Safari */
-		}
-		.layout-zone {
-			
-			float:left;
-			min-height:100px;
-			height:auto;
-			background:#99CCFF;
+			vertical-align: top;
+			text-align: left;
 		}
 
 		.lz1 {width : 100%;background-color:#F00;}
 		.lz2 {width : 25%;background-color: #F0F;}
 		.lz3 {width : 75%;background-color: #0FF;}
 		.lz4 {width : 50%;background-color: #00F;}
+		.lz5 {width : 33%;background-color: #09F;}
 
 		#drag{width:250px;height:250px;background-color:#FF0;cursor:move;border:1px dotted #000;
 			box-sizing:border-box;
@@ -37,56 +40,125 @@
 </head>
 <body>
 
-	<div class="layout-template">
-		<div class="layout-container" data-layer="0">
-			<div class="layout-zone lz3"></div>
-			<div class="layout-zone lz2"></div>
+	<div class="layout-container"  data-layer="0" operable="layout">
+		<div class="layout-row">
+			<div class="layout-cell lz3"></div>
+			<div class="layout-cell lz2"></div>
 		</div>
 	</div>
 
-	<div class="layout-template">
-		<div class="layout-container" data-layer="0">
-			<div class="layout-zone lz4">
-				<div class="layout-container" data-layer="1">
-					<div class="layout-zone lz4"></div>
-					<div class="layout-zone lz4">
-					</div>
-				</div>
+	<div class="layout-container" operable="layout" data-layer="0">
+		<div class="layout-row">
+			<div class="layout-cell lz3">
 			</div>
-			<div class="layout-zone lz4">
-				<div class="layout-container" data-layer="1">
-					<div class="layout-zone lz4"></div>
-					<div class="layout-zone lz4">
-					</div>
-				</div>
-			</div>
+			<div class="layout-cell lz2"></div>
 		</div>
 	</div>
 
 	<div id="drag" class="widget"></div>
-	<div class="test layout-container" data-layer="0">
-		<div class="layout-zone lz2"></div>
-		<div class="layout-zone lz2"></div>
-		<div class="layout-zone lz4"></div>
+	<div class="test layout-container" data-layer="0" operable="layout">
+		<div class="layout-row">
+			<div class="layout-cell lz2"></div>
+			<div class="layout-cell lz2"></div>
+			<div class="layout-cell lz4"></div>
+		</div>
 	</div>
 
-	<div class="test layout-container" data-layer="0">
-		<div class="layout-zone lz4"></div>
-		<div class="layout-zone lz4"></div>
+	<div class="test layout-container" data-layer="0" operable="layout">
+		<div class="layout-row">
+			<div class="layout-cell lz2"></div>
+			<div class="layout-cell lz2"></div>
+			<div class="layout-cell lz4"></div>
+		</div>
+	</div>
+
+	<div class="test layout-container" data-layer="0" operable="layout">
+		<div class="layout-row">
+			<div class="layout-cell lz5"></div>
+			<div class="layout-cell lz5"></div>
+			<div class="layout-cell lz5"></div>
+		</div>
 	</div>
 </body>
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="jquery-smartMenu.js"></script>
 <script type="text/javascript" src="./drag.js"></script>
 <script type="text/javascript">
+function log(k, v){
+	if (window.console && console.log) {
+		v ? console.log(k, v) : console.log(k);
+	}
+}
+var menuData = [
+   [{
+	   	text : '删除',
+	   	func : function (ev){
+	   		var self = this;
+	   		ev = ev || window.event;
+	   		var nx = ev.pageX;
+	   		var ny = ev.pageY;
+	   		// get Topper operable
+	   		alert($(self).prop('outerHTML'));
+	   		var operables = $(self).find('*[operable]');
+	   		if (operables.length) {
+	   			var offsets = (function (a){
+	   				var arr = [];
+	   				$.each(a, function (){
+	   					var pOL = 0,
+	   						pOT = 0;
+	   					var p = this;
+	   					while (p && p.offsetParent) {
+	   						p = p.offsetParent;
+	   						pOL += p.offsetLeft;
+	   						pOT += p.offsetTop;
+	   					}
+	   					var w = $(this).width(),
+	   						h = $(this).height();
+	   					arr.push({
+	   						l : pOL + $(this).offset().left,
+	   						t : pOT + $(this).offset().top,
+	   						r : w + pOL + $(this).offset().left,
+	   						b : h + pOT + $(this).offset().top,
+	   						w : w,
+	   						h : h
+	   					});
+	   				});
+	   				return arr;
+	   			})(operables);
+
+	   			var layer = 0,
+	   				p = -1;
+	   			for (var i=0,l=operables.length; i<l; i++) {
+	   				var os = offsets[i];
+	   				if (nx > os.l && nx < os.r && ny > os.t && ny < os.b) {
+	   					p =  i;
+	   					var operLayer = operables.eq(i).attr('data-layer');
+	   					if (operLayer > layer) {
+	   						layer = operLayer;
+	   					}
+	   				}
+	   			}
+	   			alert(p);
+	   			alert(layer);
+	   		} else {
+	   			alert('Static layout');
+	   		}
+	   	}
+   }]
+   ];
 	$(function (){
 		$('#drag').draggable({
-			targetContainer : ".layout-container",
-			targetClass : ".layout-zone"
+			targetContainer : ".layout-row",
+			targetClass : ".layout-cell"
 		});
 
 		$('.test').draggable({
-			targetContainer : ".layout-container",
-			targetClass : ".layout-zone"
+			targetContainer : ".layout-row",
+			targetClass : ".layout-cell"
+		});
+
+		$(document.body).find('*[operable]').each(function (){
+			$(this).smartMenu(menuData);
 		});
 	});
 </script>
