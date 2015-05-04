@@ -79,11 +79,102 @@
 						left : nx + 'px',
 						top : ny + 'px'
 					});
-
 					
+
+					// calculate hoved layout
+					var pos = Drag.caclPosition();
+					var x = mouseX,
+					    y = mouseY;
+					var p = -1;
+					var preLayoutZoneArray = [];
+					for (var i=0,l=pos.length; i<l; i++) {
+						var c = pos[i];
+						if (x > c.left && x < c.right && y > c.top && y < c.bottom) {
+							preLayoutZoneArray.push(i);
+							p = i;
+						}
+					}
+
+					if (p != -1) {
+						if (preLayoutZoneArray.length) {
+							var layer = -1;
+							var tt = preLayoutZoneArray[0];
+							for (var j=0,l=preLayoutZoneArray.length; j<l; j++) {
+								var targetZone = $(opts.targetClass).eq(preLayoutZoneArray[j]);
+								var targetParent = targetZone.closest('.layout-container');
+								var t = targetParent.attr('data-layer');
+								if (t > layer) {
+									layer = t;
+									tt = preLayoutZoneArray[j];
+								}
+							}
+							
+							// in the topper layout find all the widgets
+							var targetLayout = $(opts.targetClass).eq(tt);
+							var aWidgets = targetLayout.find('.widget');
+							if(aWidgets.length) {
+								var sortArray = [];
+								aWidgets.each(function (){
+									var po = {
+										left : $(this).offset().left,
+										top : $(this).offset().top,
+										right : $(this).offset().left + $(this).width(),
+										bottom : $(this).offset().top + $(this).height(),
+										width : $(this).width(),
+										height : $(this).height()
+									};
+									sortArray.push(po);
+								});
+								
+									var oDiv = $(that).clone().addClass('widgetPlaceHolder').css({
+										background : '#fff',
+										width : $(that).width() + 'px',
+										height : $(that).height() + 'px'
+									});
+									var placeHolder = targetLayout.find('.widgetPlaceHolder');
+									if (placeHolder.length){
+										var o = {
+											left : placeHolder.offset().left,
+											top : placeHolder.offset().top,
+											right : placeHolder.offset().left + placeHolder.width(),
+											bottom : placeHolder.offset().top + placeHolder.height()
+										};
+										if (x > o.left && x < o.right && y > o.top && y < o.bottom) {
+											return;
+										} else {
+											placeHolder.remove();
+										}
+									}
+									var tar = -1;
+									for (var i=0,l=sortArray.length; i<l; i++) {
+								    	var pi = sortArray[i];
+								    	if (aWidgets.eq(i).hasClass('widgetPlaceHolder'))return;
+								    	if (x > pi.left && x < pi.right && y > pi.top && y < pi.bottom) {
+								    		if (!targetLayout.find('.widgetPlaceHolder').length) {
+								    			if (x >= pi.left + pi.width/2) {
+									    			log('after ' + i);
+									    			tar = i;
+									    			oDiv.insertAfter(aWidgets.eq(i));
+									    		} else if (x < pi.left + pi.width/2){
+									    			log('before ' + i);
+									    			tar = i;
+									    			oDiv.insertBefore(aWidgets.eq(i));
+									    		}
+								    		}
+								    	}
+								    }
+
+								    if (tar == -1) {
+								    	oDiv.appendTo(targetLayout);
+								    }
+							    
+							}
+							
+						}
+					}
 				},
 				end : function (ev){
-					
+
 					var pos = Drag.caclPosition();
 					var p = -1;
 					var x = ev.pageX, y = ev.pageY;
@@ -136,17 +227,22 @@
 								//alert('self');
 								return;
 							}
+							
 							var layout = $(that).clone();
+							if (target.find('.widgetPlaceHolder').length) {
+								target.find('.widgetPlaceHolder').replaceWith(layout);
+								$(that).remove();
+							} else {
+							    target.append(layout.draggable(opts));
+							    layout.find('*[operable]').each(function (){
+								    $(this).smartMenu(menuData);
+							    });
+							    fixLayer(layout);
+							    // fix dataLayout
 							
+							    $(that).remove();
 
-							target.append(layout.draggable(opts));
-							layout.find('*[operable]').each(function (){
-								$(this).smartMenu(menuData);
-							});
-							fixLayer(layout);
-							// fix dataLayout
-							
-							$(that).remove();
+							}
 						}
 					}
 					Drag.draggedItem.remove();

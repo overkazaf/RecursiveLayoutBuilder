@@ -32,39 +32,36 @@
 		.lz4 {width : 50%;background-color: #00F;}
 		.lz5 {width : 33%;background-color: #09F;}
 
-		#drag{width:250px;height:250px;background-color:#FF0;cursor:move;border:1px dotted #000;
+		.widget{position: relative;width:150px;height:150px;margin-left:10px;float:left;background-color:#FF0;cursor:move;border:1px dotted #000;
 			box-sizing:border-box;
 			-moz-box-sizing:border-box; /* Firefox */
 			-webkit-box-sizing:border-box; /* Safari */}
+		.widget-pk {background-color: #f0f;}
+		.widget-rd {background-color: #f00;}
+		.widgetPlaceHolder{background:#000;opacity:0.5;border:2px solid #FF0;width:100px;height:100px;float:left;}
 		.hightlight{border:4px dotted #FF0;background:#FF0;}
 
 	</style>
 </head>
 <body>
 
-	<div class="layout-container"  data-layer="0" operable="layout">
-		<div class="layout-row">
-			<div class="layout-cell lz1"></div>
-		</div>
-	</div>
-	<div class="layout-container"  data-layer="0" operable="layout">
-		<div class="layout-row">
-			<div class="layout-cell lz1"></div>
-		</div>
-	</div>
-	<div class="layout-container"  data-layer="0" operable="layout">
-		<div class="layout-row">
-			<div class="layout-cell lz1"></div>
-		</div>
-	</div>
-
-	<div class="test layout-container" operable="layout" data-layer="0">
-		<div class="layout-row">
-			<div class="layout-cell lz2">
+	<!--
+		<div class="layout-container"  data-layer="0" operable="layout">
+			<div class="layout-row">
+				<div class="layout-cell lz1"></div>
 			</div>
-			<div class="layout-cell lz3"></div>
 		</div>
-	</div>
+		<div class="layout-container"  data-layer="0" operable="layout">
+			<div class="layout-row">
+				<div class="layout-cell lz1"></div>
+			</div>
+		</div>
+		<div class="layout-container"  data-layer="0" operable="layout">
+			<div class="layout-row">
+				<div class="layout-cell lz1"></div>
+			</div>
+		</div>
+	-->
 
 	<div class="test layout-container" data-layer="0" operable="layout">
 		<div class="layout-row">
@@ -80,25 +77,12 @@
 		</div>
 	</div>
 
-	<div class="test layout-container" data-layer="0" operable="layout">
-		<div class="layout-row">
-			<div class="layout-cell lz5"></div>
-			<div class="layout-cell lz5"></div>
-			<div class="layout-cell lz5"></div>
-		</div>
-	</div>
 
-
-	<div class="test layout-container" data-layer="0" operable="layout">
-		<div class="layout-row">
-			<div class="layout-cell lz2"></div>
-			<div class="layout-cell lz2"></div>
-			<div class="layout-cell lz2"></div>
-			<div class="layout-cell lz2"></div>
-		</div>
-	</div>
 
 	<div id="drag" class="widget" operable="widget"></div>
+	<div id="drag1" class="widget widget-pk" operable="widget"></div>
+	<div id="drag2" class="widget widget-rd" operable="widget"></div>
+	<div id="drag3" class="widget widget-rd" operable="widget"></div>
 </body>
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="jquery-smartMenu.js"></script>
@@ -167,7 +151,8 @@ var menuData = [
    }]
    ];
 	$(function (){
-		$('#drag').draggable({
+		$('.widget').draggable({
+			sorting : true,
 			targetContainer : ".layout-row",
 			targetClass : ".layout-cell"
 		});
