@@ -8,6 +8,7 @@
 		.layout-container{
 			display: table; 
 			width:100%;
+			max-width: 960px;
 		} 
 		.layout-row{
 			display: table-row;
@@ -38,13 +39,16 @@
 			-webkit-box-sizing:border-box; /* Safari */}
 		.widget-pk {background-color: #f0f;}
 		.widget-rd {background-color: #f00;}
-		.widgetPlaceHolder{background:#000;opacity:0.5;border:2px solid #FF0;width:100px;height:100px;float:left;}
+		.widgetPlaceHolder{background:#000;opacity:0.5;border:2px dotted #FF0;box-sizing:border-box;
+			-moz-box-sizing:border-box; /* Firefox */
+			-webkit-box-sizing:border-box; /* Safari */float:left;}
 		.hightlight{border:4px dotted #FF0;background:#FF0;}
-
+		.lzh1 {width : 100%;max-width:1024px;height:auto;min-height: 50px;float:left;background-color: #baff00;border:1px solid #000;word-wrap: break-word;word-break: normal;}
 	</style>
 </head>
 <body>
-
+	<button id='btn1'>改变高度</button>
+	<button id='btn2'>还原高度</button>
 	<!--
 		<div class="layout-container"  data-layer="0" operable="layout">
 			<div class="layout-row">
@@ -78,11 +82,14 @@
 	</div>
 
 
-
-	<div id="drag" class="widget" operable="widget"></div>
-	<div id="drag1" class="widget widget-pk" operable="widget"></div>
-	<div id="drag2" class="widget widget-rd" operable="widget"></div>
-	<div id="drag3" class="widget widget-rd" operable="widget"></div>
+	<div class="widget" operable="widget"></div>
+	<div class="widget widget-pk" operable="widget"></div>
+	<div class="widget" operable="widget"></div>
+	<div class="widget widget-pk" operable="widget"></div>
+	<div class="widget" operable="widget"></div>
+	<div class="widget widget-pk" operable="widget"></div>
+	<div class="widget widget-rd" operable="widget"></div>
+	<div class="widget widget-rd" operable="widget"></div>
 </body>
 <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="jquery-smartMenu.js"></script>
@@ -151,6 +158,27 @@ var menuData = [
    }]
    ];
 	$(function (){
+		$('#btn1').on('click', function (i){
+			var aH1 = $('.lzh1');
+			aH1.each(function (){
+				var minH = $(this).css('min-height');
+				if (!$(this).data('origin-height')) {
+					$(this).data('origin-height', minH);
+				}
+				//$(this).css('height', parseInt(minH)*1.1);
+				$(this).css('min-height', parseInt(minH)*1.1);
+				
+			});
+		});
+		$('#btn2').on('click', function (){
+			var aH1 = $('.lzh1');
+			aH1.each(function (){
+				var minH = $(this).data('origin-height');
+				if (minH) {
+					$(this).css('min-height', minH);
+				}
+			});
+		});
 		$('.widget').draggable({
 			sorting : true,
 			targetContainer : ".layout-row",

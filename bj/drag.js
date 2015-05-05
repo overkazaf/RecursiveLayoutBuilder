@@ -82,11 +82,13 @@
 					
 
 					// calculate hoved layout
-					var pos = Drag.caclPosition();
-					var x = mouseX,
-					    y = mouseY;
-					var p = -1;
-					var preLayoutZoneArray = [];
+					var pos = Drag.caclPosition(),
+						x = mouseX,
+					    y = mouseY,
+					    p = -1,
+					    preLayoutZoneArray = [];
+
+					// Calculate possible layout zones
 					for (var i=0,l=pos.length; i<l; i++) {
 						var c = pos[i];
 						if (x > c.left && x < c.right && y > c.top && y < c.bottom) {
@@ -95,103 +97,110 @@
 						}
 					}
 
-					if (p != -1) {
-						if (preLayoutZoneArray.length) {
-							var layer = -1;
-							var tt = preLayoutZoneArray[0];
-							for (var j=0,l=preLayoutZoneArray.length; j<l; j++) {
-								var targetZone = $(opts.targetClass).eq(preLayoutZoneArray[j]);
-								var targetParent = targetZone.closest('.layout-container');
-								var t = targetParent.attr('data-layer');
-								if (t > layer) {
-									layer = t;
-									tt = preLayoutZoneArray[j];
-								}
+					if (p != -1 && preLayoutZoneArray.length) {
+						var layer = -1,
+							tt = preLayoutZoneArray[0];
+
+						// Calculate the topper layout
+						for (var j=0,l=preLayoutZoneArray.length; j<l; j++) {
+							var targetZone = $(opts.targetClass).eq(preLayoutZoneArray[j]);
+							var targetParent = targetZone.closest('.layout-container');
+							var t = targetParent.attr('data-layer');
+							if (t > layer) {
+								layer = t;
+								tt = preLayoutZoneArray[j];
 							}
+						}
+						
+						// in the topper layout find all the widgets
+						var targetLayout = $(opts.targetClass).eq(tt),
+							aWidgets = targetLayout.find('.widget');
+						
+						if(aWidgets.length) {
+							var sortArray = [];
+							aWidgets.each(function (){
+								var po = {
+									left : $(this).offset().left,
+									top : $(this).offset().top,
+									right : $(this).offset().left + $(this).width(),
+									bottom : $(this).offset().top + $(this).height(),
+									width : $(this).width(),
+									height : $(this).height()
+								};
+								sortArray.push(po);
+							});
 							
-							// in the topper layout find all the widgets
-							var targetLayout = $(opts.targetClass).eq(tt);
-							var aWidgets = targetLayout.find('.widget');
-							if(aWidgets.length) {
-								var sortArray = [];
-								aWidgets.each(function (){
-									var po = {
-										left : $(this).offset().left,
-										top : $(this).offset().top,
-										right : $(this).offset().left + $(this).width(),
-										bottom : $(this).offset().top + $(this).height(),
-										width : $(this).width(),
-										height : $(this).height()
-									};
-									sortArray.push(po);
-								});
-								
-									var oDiv = $(that).clone().addClass('widgetPlaceHolder').css({
-										background : '#fff',
-										width : $(that).width() + 'px',
-										height : $(that).height() + 'px'
-									});
-									var placeHolder = targetLayout.find('.widgetPlaceHolder');
-									if (placeHolder.length){
-										var o = {
-											left : placeHolder.offset().left,
-											top : placeHolder.offset().top,
-											right : placeHolder.offset().left + placeHolder.width(),
-											bottom : placeHolder.offset().top + placeHolder.height()
-										};
-										if (x > o.left && x < o.right && y > o.top && y < o.bottom) {
-											return;
-										} else {
-											placeHolder.remove();
+							var sal = sortArray.length;
+							var placeHolder = ($('.widgetPlaceHolder').length && $('.widgetPlaceHolder')) || $(that).clone().addClass('widgetPlaceHolder');
+							
+							if (sal) {
+								if (sal == 1) {
+									// fix only one item's bug
+									var c = sortArray[0];
+									if (x >= c.left + c.width/2) {
+										placeHolder.appendTo(targetLayout);
+									} else {
+										placeHolder.prependTo(targetLayout);
+									}
+								}else {
+									//find a place to insert
+									var p = -1,
+										fixed = false;
+
+									for (var i=0; i<sal; i++) {
+										var c = sortArray[i];
+										if (y > c.top && y < c.bottom) {
+											var half = c.left + c.width/2;
+											if (x >= half && ( (i+1<sal && x<(sortArray[i+1].left + sortArray[i+1].width/2)) || x < c.right)) {
+												p = i;break;
+											} else if (x < half) {
+												p = i;fixed=true;break;
+											}
 										}
 									}
-									var tar = -1;
-									for (var i=0,l=sortArray.length; i<l; i++) {
-								    	var pi = sortArray[i];
-								    	if (aWidgets.eq(i).hasClass('widgetPlaceHolder'))return;
-								    	if (x > pi.left && x < pi.right && y > pi.top && y < pi.bottom) {
-								    		if (!targetLayout.find('.widgetPlaceHolder').length) {
-								    			if (x >= pi.left + pi.width/2) {
-									    			log('after ' + i);
-									    			tar = i;
-									    			oDiv.insertAfter(aWidgets.eq(i));
-									    		} else if (x < pi.left + pi.width/2){
-									    			log('before ' + i);
-									    			tar = i;
-									    			oDiv.insertBefore(aWidgets.eq(i));
-									    		}
-								    		}
-								    	}
-								    }
 
-								    if (tar == -1) {
-								    	oDiv.appendTo(targetLayout);
-								    }
-							    
+									if (p != -1) {
+										if (!fixed){
+											placeHolder.insertAfter(aWidgets.eq(p));
+										} else {
+											placeHolder.insertBefore(aWidgets.eq(p));
+										}
+									}
+								}
 							}
-							
+						    
+						} else {
+							$('.widgetPlaceHolder').remove();
+							$(that).clone().addClass('widgetPlaceHolder').appendTo(targetLayout);
 						}
+					} else {
+						$('.widgetPlaceHolder').remove();
 					}
 				},
 				end : function (ev){
 
-					var pos = Drag.caclPosition();
-					var p = -1;
-					var x = ev.pageX, y = ev.pageY;
-					var so = {//self container
-						left : $(that).offset().left,
-						top : $(that).offset().top,
-						right : $(that).offset().left + $(that).width(),
-						bottom : $(that).offset().top + $(that).height()
-					};
+					var pos = Drag.caclPosition(),
+						p = -1,
+						preLayoutZoneArray = [],
+						x = ev.pageX, 
+						y = ev.pageY,
+						ol = $(that).offset().left,
+						ot = $(that).offset().top,
+						so = {//self container
+							left : ol,
+							top : ot,
+							right : ol + $(that).width(),
+							bottom : ot + $(that).height()
+						};
 
 					if (x > so.left && x < so.right && y > so.top && y < so.bottom) {
 						$(document).off('mousemove');
 						$(document).off('mouseup');
 						Drag.draggedItem.remove();
+						$('.widgetPlaceHolder').length && $('.widgetPlaceHolder').remove();
 						return;
 					}
-					var preLayoutZoneArray = [];
+
 					for (var i=0,l=pos.length; i<l; i++) {
 						var c = pos[i];
 						if (x > c.left && x < c.right && y > c.top && y < c.bottom) {
@@ -201,54 +210,60 @@
 					}
 					if (p != -1) {
 						if (preLayoutZoneArray.length) {
-							var layer = -1;
-							var tt = preLayoutZoneArray[0];
+							var layer = -1,
+								tt = preLayoutZoneArray[0];
 							for (var j=0,l=preLayoutZoneArray.length; j<l; j++) {
-								var targetZone = $(opts.targetClass).eq(preLayoutZoneArray[j]);
-								var targetParent = targetZone.closest('.layout-container');
-								var t = targetParent.attr('data-layer');
+								var targetZone = $(opts.targetClass).eq(preLayoutZoneArray[j]),
+									targetParent = targetZone.closest('.layout-container'),
+									t = targetParent.attr('data-layer');
+
 								if (t > layer) {
-									layer = t;
-									tt = preLayoutZoneArray[j];
+									layer = t; tt = preLayoutZoneArray[j];
 								}
 							}
 							
+							// Define a layer update function
 							var fixLayer = function (layoutElem){
 								layoutElem.each(function (){
-									var originLayer  = 0; 
+									var originLayer = 0; 
 										originLayer = $(this).parent() && $(this).parent().closest('.layout-container').attr('data-layer');
 									$(this).attr('data-layer', +originLayer + 1);
 								});
 								return layoutElem;
 							};
-							var target = $(opts.targetClass).eq(tt);
 
+
+							var target = $(opts.targetClass).eq(tt);
 							if (target.closest('.layout-container') == $(that)) {
-								//alert('self');
 								return;
 							}
 							
 							var layout = $(that).clone();
-							if (target.find('.widgetPlaceHolder').length) {
-								target.find('.widgetPlaceHolder').replaceWith(layout);
-								$(that).remove();
-							} else {
-							    target.append(layout.draggable(opts));
-							    layout.find('*[operable]').each(function (){
-								    $(this).smartMenu(menuData);
-							    });
-							    fixLayer(layout);
-							    // fix dataLayout
-							
-							    $(that).remove();
-
+							if (target) {
+								if (target.find('.widgetPlaceHolder') && target.find('.widgetPlaceHolder').length) {
+									target.find('.widgetPlaceHolder').replaceWith(layout.draggable(opts));
+									$(that).remove();
+								} else {
+									// for layout dragging
+									log('hshs');
+								    target.append(layout.draggable(opts));
+								    layout.find('*[operable]').each(function (){
+									    $(this).smartMenu(menuData);
+								    });
+								    fixLayer(layout);
+								    // fix dataLayout
+								    $(that).remove();
+								}
 							}
 						}
 					}
 					Drag.draggedItem.remove();
-					$(document).off('mousemove');
-					$(document).off('mouseup');
+					$(document).off('mousemove').off('mouseup');
+
+					// Update targetElements
 					targetElems = $(opts.targetClass);
+					var wp = $('.widgetPlaceHolder');
+					wp.length && wp.remove();
 					
 				},
 				caclPosition : function (){
